@@ -10363,10 +10363,9 @@
         return JSON.stringify(localStorage.getItem("questions"));
       }
 
-      async function sendProgressUpdate(q_id, email, cookie) {
+      async function sendProgressUpdate(q_id) {
         // Update the local progress data after a successful update
         userProgressData[q_id] = 1;
-        console.log(userProgressData)
       }
 
       function renderRoadmap(data, progressData) {
@@ -10434,7 +10433,7 @@
                   checkbox.addEventListener("change", (event) => {
                     const isChecked = event.target.checked;
                     localStorage.setItem(topic.id, isChecked); // Store status in local storage
-                    console.log("checkbox is clicked " , isChecked);
+                    sendProgressUpdate(topic.id)
                  });
                   checkboxContainer.appendChild(checkbox);
                   topicItem.appendChild(checkboxContainer);
