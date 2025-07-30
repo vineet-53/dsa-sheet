@@ -81,7 +81,6 @@
       >
         SDE SHEET DSA Roadmap 🚀
       </h1>
-
       <div id="roadmap-container" class="space-y-6">
         <p class="text-center text-gray-500 animate-pulse">
           Loadi roadmap data...
@@ -10112,6 +10111,7 @@
           ],
         },
       ];
+
       let resultData = {
         result: {
           bfs: 1,
@@ -10295,6 +10295,7 @@
           ninjstriningdp7: 1,
         },
       };
+
       let userEmail = localStorage.getItem("userEmail");
       let userCookie = localStorage.getItem("userCookie");
       let userProgressData = {}; // To store fetched progress data
@@ -10323,60 +10324,49 @@
         const year = today.getFullYear();
         return `${day}/${month}/${year}`;
       }
-
+      async function popluateProgress() {
+        return new Promise((res) => {
+          let ids = {};
+          jsonData.forEach((step) => {
+            step.sub_steps.forEach((substep) => {
+              substep.topics.forEach((topic) => {
+                if (topic.id in resultData["result"]) {
+                  localStorage.setItem(topic.id , true); 
+                }});
+            });
+          });
+          res(ids);
+        });
+      }
+      async function populateQuestions() {
+        return new Promise((res) => {
+          let ids = {};
+          jsonData.forEach((step) => {
+            step.sub_steps.forEach((substep) => {
+              substep.topics.forEach((topic) => {
+                  localStorage.setItem(topic.id , false); 
+              });
+            });
+          });
+          res(ids);
+        });
+      }
       async function fetchProgressData(email, cookie) {
-        return resultData["result"];
+        if (
+          localStorage.getItem("questions") == null ||
+          localStorage.getItem("questions") === ""
+        ) {
+          // set the questions
+          let questionStatus = await populateQuestions();
+          await popluateProgress();
+        }
+        return JSON.stringify(localStorage.getItem("questions"));
       }
 
       async function sendProgressUpdate(q_id, email, cookie) {
-        if (!email || !cookie) {
-          console.error(
-            "User email or cookie not available for progress update."
-          );
-          alert("Please provide your email and cookie to track progress.");
-          showUserInputModal(); // Show modal if data is missing
-          return;
-        }
-
-        const payload = {
-          dateKey: getFormattedDate(),
-          email: email,
-          q_data: 1, // As specified in the prompt
-          q_id: q_id,
-        };
-
-        try {
-          const response = await fetch(
-            "https://backend.takeuforward.org/api/profile/update/progress",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie, // Send cookie in the header
-              },
-              body: JSON.stringify(payload),
-            }
-          );
-
-          if (response.ok) {
-            console.log(`Progress updated successfully for ${q_id}`);
-            // Update the local progress data after a successful update
-            userProgressData[q_id] = 1;
-          } else {
-            const errorText = await response.text();
-            console.error(
-              `Failed to update progress for ${q_id}: ${response.status} - ${errorText}`
-            );
-            alert(
-              `Failed to update progress for ${q_id}. Please check your inputs or try again.`
-            );
-          }
-        } catch (error) {
-          console.error(`Error sending progress update for ${q_id}:`, error);
-          alert(
-            `Network error updating progress for ${q_id}. Please check your internet connection.`
-          );
-        }
+        // Update the local progress data after a successful update
+        userProgressData[q_id] = 1;
+        console.log(userProgressData)
       }
 
       function renderRoadmap(data, progressData) {
@@ -10600,14 +10590,14 @@
 
       document.addEventListener("DOMContentLoaded", async () => {
         // Check for existing user data
-          // Fetch progress data if user info is available
-          userProgressData = await fetchProgressData(userEmail, userCookie);
-          if (jsonData.length > 0) {
-            renderRoadmap(jsonData, userProgressData);
-          } else {
-            document.getElementById("roadmap-container").innerHTML =
-              '<p class="text-red-500 text-center py-10">Please paste your JSON data into the `jsonData` variable in the script section to display the roadmap.</p>';
-          }
+        // Fetch progress data if user info is available
+        userProgressData = await fetchProgressData(userEmail, userCookie);
+        if (jsonData.length > 0) {
+          renderRoadmap(jsonData, userProgressData);
+        } else {
+          document.getElementById("roadmap-container").innerHTML =
+            '<p class="text-red-500 text-center py-10">Please paste your JSON data into the `jsonData` variable in the script section to display the roadmap.</p>';
+        }
 
         // Save button functionality for the modal
         document
