@@ -10434,16 +10434,8 @@
                   checkbox.addEventListener("change", (event) => {
                     const isChecked = event.target.checked;
                     localStorage.setItem(topic.id, isChecked); // Store status in local storage
-
-                    if (isChecked) {
-                      console.log(`Checkbox checked for ${topic.id}`);
-                      sendProgressUpdate(topic.id, userEmail, userCookie);
-                    } else {
-                      console.log(`Checkbox unchecked for ${topic.id}`);
-                      // No backend call for uncheck as per prompt, but status is saved locally
-                      // If you need to "unmark" progress in the backend, you'd send q_data: 0
-                    }
-                  });
+                    console.log("checkbox is clicked " , isChecked);
+                 });
                   checkboxContainer.appendChild(checkbox);
                   topicItem.appendChild(checkboxContainer);
 
