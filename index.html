@@ -84,7 +84,7 @@
 
       <div id="roadmap-container" class="space-y-6">
         <p class="text-center text-gray-500 animate-pulse">
-          Loading roadmap data...
+          Loadi roadmap data...
         </p>
       </div>
     </div>
@@ -10392,7 +10392,7 @@
         data.forEach((step) => {
           const stepDetails = document.createElement("details");
           stepDetails.className = "bg-white rounded-xl shadow-lg mb-6 group";
-          stepDetails.setAttribute("open", ""); // Keep top-level steps open by default
+          stepDetails.setAttribute("close", ""); // Keep top-level steps open by default
 
           const stepSummary = document.createElement("summary");
           stepSummary.className =
